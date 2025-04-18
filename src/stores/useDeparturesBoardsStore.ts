@@ -1,33 +1,56 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 
-interface SLDepartureResult {
-  departures: Departure[];
+interface RestrobotDepartureBoardResponse {
+  Departure: ResrobotDeparture[];
+}
+
+interface ResrobotDeparture {
+  direction: string;
+  directionFlag: string;
+  time: string;
+  date: string;
+  Product: ResrobotProduct[];
+}
+
+interface ResrobotProduct {
+  line: string;
+  cls: string;
 }
 
 export interface Departure {
-  destination: string;
-  display: string;
-  scheduled: string;
-  expected: string;
-  line: Line;
-}
-
-interface Line {
-  designation: string;
+  line: string;
+  direction: string;
+  time: string;
+  date: string;
+  timeRemaining: string;
 }
 
 export interface DeparturesBoard {
   name: string;
-  departures: Departure[];
+  departuresDir1: Departure[];
+  departuresDir2: Departure[];
 }
 
-interface ConfigEntry {
-  name: string;
-  site: string;
-  transport: string;
-  direction: number;
+interface Config {
+  api: ApiConfig;
+  stops: StopConfig[];
 }
+
+interface ApiConfig {
+  key: string;
+  fetchInterval: number;
+  fetchDuration: 120;
+}
+
+interface StopConfig {
+  displayName: string;
+  stopId: number;
+  products: number;
+}
+
+const configResponse = await fetch("/config.json");
+const config: Config = await configResponse.json();
 
 export const useDeparturesBoardsStore = defineStore("departuresBoards", () => {
   const departuresBoards = ref<DeparturesBoard[]>([]);
@@ -35,86 +58,146 @@ export const useDeparturesBoardsStore = defineStore("departuresBoards", () => {
   const error = ref<string | null>(null);
 
   async function fetchDeparturesBoards() {
-    const config: ConfigEntry[] = [
-      {
-        name: "Ottsjövägen buss 1",
-        site: "1505",
-        transport: "BUS",
-        direction: 1,
-      },
-      {
-        name: "Ottsjövägen buss 2",
-        site: "1505",
-        transport: "BUS",
-        direction: 2,
-      },
-      {
-        name: "Årstafältet tvärbanan 1",
-        site: "1521",
-        transport: "TRAM",
-        direction: 1,
-      },
-      {
-        name: "Årstafältet tvärbanan 2",
-        site: "1521",
-        transport: "TRAM",
-        direction: 2,
-      },
-      {
-        name: "Årstaberg pendel 1",
-        site: "9531",
-        transport: "TRAIN",
-        direction: 1,
-      },
-      {
-        name: "Årstaberg pendel 2",
-        site: "9531",
-        transport: "TRAIN",
-        direction: 2,
-      },
-    ];
-
     departuresBoards.value = await Promise.all(
-      config.map(
-        async (configEntry: ConfigEntry) =>
-          await getdeparturesBoard(configEntry)
+      config.stops.map(
+        async (stopConfig: StopConfig) => await getdeparturesBoard(stopConfig)
       )
     );
   }
 
   async function getdeparturesBoard(
-    configEntry: ConfigEntry
+    stopConfig: StopConfig
   ): Promise<DeparturesBoard> {
     try {
-      const url = `https://transport.integration.sl.se/v1/sites/${configEntry.site}/departures?&forecast=60&transport=${configEntry.transport}&direction=${configEntry.direction}`;
+      const url = `https://api.resrobot.se/v2.1/departureBoard?id=${stopConfig.stopId}&products=${stopConfig.products}&duration=${config.api.fetchDuration}&accessId=${config.api.key}&format=json`;
       const response = await fetch(url);
 
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
 
-      const slDepartureResult = (await response.json()) as SLDepartureResult;
+      const resrobotDepartureBoardResponse =
+        (await response.json()) as RestrobotDepartureBoardResponse;
 
-      return createdeparturesBoard(configEntry, slDepartureResult);
+      return createdeparturesBoard(stopConfig, resrobotDepartureBoardResponse);
     } catch (error) {
       if (error instanceof Error) {
         console.error("Network error:", error.message);
       } else {
         console.error("Unexpected error:", error);
       }
-      throw error; // Re-throw the error to ensure proper error handling
+      throw error;
     }
   }
 
   function createdeparturesBoard(
-    configEntry: ConfigEntry,
-    slDepartureResult: SLDepartureResult
+    stopConfig: StopConfig,
+    resrobotDepartureBoardResponse: RestrobotDepartureBoardResponse
   ): DeparturesBoard {
+    const departuresDir1: Departure[] = [];
+    const departuresDir2: Departure[] = [];
+    resrobotDepartureBoardResponse.Departure.forEach(
+      (departure: ResrobotDeparture) => {
+        const newDeparture = {
+          line: departure.Product[0].line,
+          direction: formatDirection(departure.direction),
+          time: departure.time,
+          date: departure.date,
+          timeRemaining: calculateTimeRemaining(
+            new Date(),
+            new Date(`${departure.date} ${departure.time}`)
+          ),
+        };
+
+        if (departure.directionFlag === "1") {
+          departuresDir1.push(newDeparture);
+        } else if (departure.directionFlag === "2") {
+          departuresDir2.push(newDeparture);
+        }
+      }
+    );
+
     return {
-      name: configEntry.name,
-      departures: slDepartureResult.departures,
+      name: stopConfig.displayName,
+      departuresDir1: departuresDir1,
+      departuresDir2: departuresDir2,
     };
   }
+
+  function formatDirection(direction: string): string {
+    const index = direction.indexOf("(");
+    if (index !== -1) {
+      return direction.substring(0, index).trim();
+    }
+    return direction;
+  }
+
+  function handleTimeChange() {
+    const now = new Date();
+    departuresBoards.value.forEach((board) => {
+      board.departuresDir1 = buildTimeUpdatedDepartures(
+        now,
+        board.departuresDir1
+      );
+      board.departuresDir2 = buildTimeUpdatedDepartures(
+        now,
+        board.departuresDir2
+      );
+    });
+  }
+
+  function calculateTimeRemaining(startDate: Date, endDate: Date): string {
+    const distance = endDate.getTime() - startDate.getTime();
+
+    if (distance < 0) {
+      return "Now";
+    }
+
+    const hours = Math.floor(
+      (distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+    return formatTimeString(hours, minutes, seconds);
+  }
+
+  function formatTimeString(hours: number, minutes: number, seconds: number) {
+    const hourString = hours > 0 ? `${hours}:` : "";
+    const minutesString = minutes.toString().padStart(2, "0");
+    const secondsString = seconds.toString().padStart(2, "0");
+
+    return `${hourString}${minutesString}:${secondsString}`;
+  }
+
+  function buildTimeUpdatedDepartures(date: Date, departures: Departure[]) {
+    const cutoffTime = new Date(date);
+    cutoffTime.setMinutes(cutoffTime.getMinutes() - 1);
+
+    const newDepartures = departures.filter(
+      (departure) =>
+        new Date(`${departure.date} ${departure.time}`) > cutoffTime
+    );
+
+    newDepartures.forEach((departure) => {
+      departure.timeRemaining = calculateTimeRemaining(
+        date,
+        new Date(`${departure.date} ${departure.time}`)
+      );
+    });
+
+    return newDepartures;
+  }
+
+  fetchDeparturesBoards();
+
+  window.setInterval(() => {
+    fetchDeparturesBoards();
+  }, config.api.fetchInterval);
+
+  window.setInterval(() => {
+    handleTimeChange();
+  }, 1000);
 
   return { departuresBoards, loading, error, fetchDeparturesBoards };
 });
