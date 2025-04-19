@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <DeparturesBoards />
+    <DepartureBoards />
   </v-container>
 </template>
 

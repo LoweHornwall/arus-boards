@@ -16,7 +16,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { type Departure } from "@/stores/useDeparturesBoardsStore";
+import type { Departure } from "@/config/types";
 defineProps<{
   departure: Departure;
 }>();

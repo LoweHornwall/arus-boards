@@ -1,6 +1,6 @@
 <template>
-  <v-card color="primary" variant="outlined">
-    <v-card-title class="text-center">{{ departuresBoard.name }}</v-card-title>
+  <v-card v-if="departureBoard" color="primary" variant="outlined">
+    <v-card-title class="text-center">{{ departureBoard.name }}</v-card-title>
     <v-card-text class="text-center">
       <v-container class="pa-0 ma-0" fluid>
         <v-row no-gutters>
@@ -9,8 +9,8 @@
               <v-icon icon="mdi-arrow-left" />
             </div>
             <div style="height: 11rem" class="overflow-auto">
-              <departures-board-timetable
-                :departures="departuresBoard.departuresDir1"
+              <departure-board-timetable
+                :departures="departureBoard.departuresDir1"
               />
             </div>
           </v-col>
@@ -20,8 +20,8 @@
               <v-icon icon="mdi-arrow-right" />
             </div>
             <div style="height: 11rem" class="overflow-auto">
-              <departures-board-timetable
-                :departures="departuresBoard.departuresDir2"
+              <departure-board-timetable
+                :departures="departureBoard.departuresDir2"
               />
             </div>
           </v-col>
@@ -31,9 +31,18 @@
   </v-card>
 </template>
 <script setup lang="ts">
-import { type DeparturesBoard } from "@/stores/useDeparturesBoardsStore";
+import type { BoardConfig } from "@/config/types";
+import { useDepartureBoard } from "@/composables/useDepartureBoard";
 
-defineProps<{
-  departuresBoard: DeparturesBoard;
+const props = defineProps<{
+  apiKey: string;
+  boardConfig: BoardConfig;
 }>();
+
+const { departureBoard, start } = useDepartureBoard(
+  props.apiKey,
+  props.boardConfig
+);
+
+start();
 </script>
