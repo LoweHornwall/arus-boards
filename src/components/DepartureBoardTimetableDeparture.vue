@@ -11,8 +11,13 @@
         {{ departure.direction }}
       </div>
     </div>
-    <div style="width: 5rem">{{ departure.time }}</div>
-    <div style="width: 5rem">{{ departure.timeRemaining }}</div>
+    <div class="me-4" style="width: 6rem">{{ departure.time }}</div>
+    <v-icon icon="mdi-bus-clock" />
+    <div class="me-4" style="width: 2.5rem">{{ departure.timeRemaining }}</div>
+    <v-icon icon="mdi-walk" />
+    <div class="me-4" style="width: 2.5rem">
+      {{ departure.timeRemainingWalk }}
+    </div>
   </div>
 </template>
 <script setup lang="ts">

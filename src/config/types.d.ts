@@ -21,6 +21,7 @@ export interface Departure {
   time: string;
   date: string;
   timeRemaining: string;
+  timeRemainingWalk: string;
 }
 
 export interface DeparturesBoard {
@@ -40,4 +41,5 @@ export interface BoardConfig {
   products: number;
   fetchInterval: number;
   fetchDuration: number;
+  walkTime: number;
 }

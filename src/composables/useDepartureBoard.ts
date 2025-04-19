@@ -46,16 +46,22 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
     const departuresDir1: Departure[] = [];
     const departuresDir2: Departure[] = [];
 
+    const now = new Date();
+    const walkTimeStart = new Date(now.getTime() + boardConfig.walkTime);
+
     resrobotDepartureBoardResponse.Departure.forEach(
       (departure: ResrobotDeparture) => {
+        const departureDate = new Date(`${departure.date} ${departure.time}`);
+
         const newDeparture = {
           line: departure.Product[0].line,
           direction: formatDirection(departure.direction),
           time: departure.time,
           date: departure.date,
-          timeRemaining: calculateTimeRemaining(
-            new Date(),
-            new Date(`${departure.date} ${departure.time}`)
+          timeRemaining: calculateTimeRemaining(now, departureDate),
+          timeRemainingWalk: calculateTimeRemaining(
+            walkTimeStart,
+            departureDate
           ),
         };
         if (departure.directionFlag === "1") {
@@ -77,8 +83,10 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
   function calculateTimeRemaining(startDate: Date, endDate: Date): string {
     const distance = endDate.getTime() - startDate.getTime();
 
-    if (distance < 0) {
+    if (distance < 0 && distance > -1000 * 60) {
       return "Now";
+    } else if (distance < 0) {
+      return "-";
     }
 
     const hours = Math.floor(
@@ -124,6 +132,7 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
   function buildTimeUpdatedDepartures(date: Date, departures: Departure[]) {
     const cutoffTime = new Date(date);
     cutoffTime.setMinutes(cutoffTime.getMinutes() - 1);
+    const walkTimeStart = new Date(date.getTime() + boardConfig.walkTime);
 
     const newDepartures = departures.filter(
       (departure) =>
@@ -133,6 +142,10 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
     newDepartures.forEach((departure) => {
       departure.timeRemaining = calculateTimeRemaining(
         date,
+        new Date(`${departure.date} ${departure.time}`)
+      );
+      departure.timeRemainingWalk = calculateTimeRemaining(
+        walkTimeStart,
         new Date(`${departure.date} ${departure.time}`)
       );
     });
