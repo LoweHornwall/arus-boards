@@ -13,7 +13,6 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
 import type { Config } from "@/config/types";
 const config = ref<Config | null>(null);
 

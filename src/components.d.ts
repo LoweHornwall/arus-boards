@@ -14,6 +14,7 @@ declare module 'vue' {
     DepartureBoards: typeof import('./components/DepartureBoards.vue')['default']
     DepartureBoardTimetable: typeof import('./components/DepartureBoardTimetable.vue')['default']
     DepartureBoardTimetableDeparture: typeof import('./components/DepartureBoardTimetableDeparture.vue')['default']
+    DigitalClock: typeof import('./components/DigitalClock.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
