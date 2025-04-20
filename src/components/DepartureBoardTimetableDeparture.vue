@@ -49,7 +49,11 @@ const props = defineProps<{
   departure: Departure;
 }>();
 
-const { alarmSet, alarmOn, toggleAlarm } = useDepartureAlarm(props.departure);
+const departure = computed(() => {
+  return props.departure;
+});
+
+const { alarmSet, alarmOn, toggleAlarm } = useDepartureAlarm(departure);
 
 const alarmColor = computed(() => {
   if (alarmOn.value) {
