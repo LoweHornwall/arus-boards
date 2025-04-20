@@ -1,9 +1,8 @@
 import type { Departure } from "@/config/types";
 import { useSound } from "@vueuse/sound";
 import alarmSFX from "../assets/sounds/alarm-clock.mp3";
-import type { Ref } from "vue";
 
-export function useDepartureAlarm(departure: Ref<Departure>) {
+export function useDepartureAlarm(departure: Departure) {
   const alarmSet = ref(false);
   const alarmOn = ref(false);
   const { play: playAlarmSound, stop: stopAlarmSound } = useSound(alarmSFX, {
@@ -16,10 +15,10 @@ export function useDepartureAlarm(departure: Ref<Departure>) {
   function turnOnAlarm() {
     alarmSet.value = true;
     unwatch = watch(
-      () => departure.value.timeRemainingWalk,
+      () => departure.timeRemainingWalk,
       () => {
-        console.log("Alarm check:", departure.value.timeRemainingWalk);
-        if (departure.value.timeRemainingWalk === "Now") {
+        console.log("Alarm check:", departure.timeRemainingWalk);
+        if (departure.timeRemainingWalk === "Now") {
           alarmOn.value = true;
           playAlarmSound();
         } else if (alarmOn.value && unwatch) {

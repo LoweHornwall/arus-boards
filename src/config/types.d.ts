@@ -8,6 +8,11 @@ export interface ResrobotDeparture {
   time: string;
   date: string;
   Product: ResrobotProduct[];
+  JourneyDetailRef: ResrobotDepartureJourneyDetailRef;
+}
+
+export interface ResrobotDepartureJourneyDetailRef {
+  ref: string;
 }
 
 export interface ResrobotProduct {
@@ -22,6 +27,7 @@ export interface Departure {
   date: string;
   timeRemaining: string;
   timeRemainingWalk: string;
+  journeyDetailRef: string;
 }
 
 export interface DeparturesBoard {

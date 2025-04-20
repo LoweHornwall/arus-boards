@@ -9,7 +9,11 @@ import type {
 import { onUnmounted } from "vue";
 
 export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
-  const departureBoard = ref<DeparturesBoard | null>(null);
+  const departureBoard = ref<DeparturesBoard>({
+    name: boardConfig.displayName,
+    departuresDir1: [],
+    departuresDir2: [],
+  });
   const loading = ref(false);
 
   const url = `https://api.resrobot.se/v2.1/departureBoard?id=${boardConfig.stopId}&products=${boardConfig.products}&duration=${boardConfig.fetchDuration}&accessId=${apiKey}&format=json`;
@@ -25,12 +29,11 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
         }
         return response.json();
       })
-      .then((resrobotDepartureBoardResponse) => {
-        departureBoard.value = createDepartureBoard(
-          boardConfig.displayName,
-          resrobotDepartureBoardResponse
-        );
-      })
+      .then(
+        (resrobotDepartureBoardResponse: RestrobotDepartureBoardResponse) => {
+          updateDepartureBoard(resrobotDepartureBoardResponse);
+        }
+      )
       .catch((error) => {
         console.error("Error fetching departure board:", error);
       })
@@ -39,31 +42,21 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
       });
   }
 
-  function createDepartureBoard(
-    name: string,
+  function updateDepartureBoard(
     resrobotDepartureBoardResponse: RestrobotDepartureBoardResponse
-  ): DeparturesBoard {
-    const departuresDir1: Departure[] = [];
-    const departuresDir2: Departure[] = [];
+  ) {
     const now = new Date();
-
     resrobotDepartureBoardResponse.Departure.forEach(
       (departure: ResrobotDeparture) => {
         const newDeparture = buildDeparture(now, departure);
         if (departure.directionFlag === "1") {
-          departuresDir1.push(newDeparture);
+          insertDeparture(departureBoard.value.departuresDir1, newDeparture);
         }
         if (departure.directionFlag === "2") {
-          departuresDir2.push(newDeparture);
+          insertDeparture(departureBoard.value.departuresDir2, newDeparture);
         }
       }
     );
-
-    return {
-      name: name,
-      departuresDir1: departuresDir1,
-      departuresDir2: departuresDir2,
-    };
   }
 
   function buildDeparture(
@@ -82,9 +75,27 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
       date: resrobotDeparture.date,
       timeRemaining: calculateTimeRemaining(startDate, departureDate),
       timeRemainingWalk: calculateTimeRemaining(walkTimeStart, departureDate),
+      journeyDetailRef: resrobotDeparture.JourneyDetailRef.ref,
     };
 
     return departure;
+  }
+
+  function insertDeparture(
+    departures: Departure[],
+    departure: Departure
+  ): Departure[] {
+    const index = departures.findIndex(
+      (dep) => dep.journeyDetailRef === departure.journeyDetailRef
+    );
+
+    if (index !== -1) {
+      departures[index] = Object.assign(departures[index], departure);
+    } else {
+      departures.push(departure);
+    }
+
+    return departures;
   }
 
   function calculateTimeRemaining(startDate: Date, endDate: Date): string {
