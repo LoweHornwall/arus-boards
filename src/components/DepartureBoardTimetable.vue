@@ -1,6 +1,9 @@
 <template>
   <div class="mb-1" />
-  <div v-for="(departure, index) in departures" :key="index">
+  <div
+    v-for="(departure, index) in departures"
+    :key="`${departure.line}-${departure.date}-${departure.time}`"
+  >
     <departure-board-timetable-departure :departure="departure" />
     <v-divider v-if="index < departures.length - 1" class="my-2" />
   </div>

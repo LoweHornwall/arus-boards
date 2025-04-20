@@ -45,25 +45,11 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
   ): DeparturesBoard {
     const departuresDir1: Departure[] = [];
     const departuresDir2: Departure[] = [];
-
     const now = new Date();
-    const walkTimeStart = new Date(now.getTime() + boardConfig.walkTime);
 
     resrobotDepartureBoardResponse.Departure.forEach(
       (departure: ResrobotDeparture) => {
-        const departureDate = new Date(`${departure.date} ${departure.time}`);
-
-        const newDeparture = {
-          line: departure.Product[0].line,
-          direction: formatDirection(departure.direction),
-          time: departure.time,
-          date: departure.date,
-          timeRemaining: calculateTimeRemaining(now, departureDate),
-          timeRemainingWalk: calculateTimeRemaining(
-            walkTimeStart,
-            departureDate
-          ),
-        };
+        const newDeparture = buildDeparture(now, departure);
         if (departure.directionFlag === "1") {
           departuresDir1.push(newDeparture);
         }
@@ -78,6 +64,27 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
       departuresDir1: departuresDir1,
       departuresDir2: departuresDir2,
     };
+  }
+
+  function buildDeparture(
+    startDate: Date,
+    resrobotDeparture: ResrobotDeparture
+  ): Departure {
+    const departureDate = new Date(
+      `${resrobotDeparture.date} ${resrobotDeparture.time}`
+    );
+    const walkTimeStart = new Date(startDate.getTime() + boardConfig.walkTime);
+
+    const departure = {
+      line: resrobotDeparture.Product[0].line,
+      direction: formatDirection(resrobotDeparture.direction),
+      time: resrobotDeparture.time,
+      date: resrobotDeparture.date,
+      timeRemaining: calculateTimeRemaining(startDate, departureDate),
+      timeRemainingWalk: calculateTimeRemaining(walkTimeStart, departureDate),
+    };
+
+    return departure;
   }
 
   function calculateTimeRemaining(startDate: Date, endDate: Date): string {
