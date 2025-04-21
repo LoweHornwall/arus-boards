@@ -1,6 +1,6 @@
 <template>
   <v-container class="pa-0 ma-0" fluid>
-    <v-row no-gutters class="cursor-pointer" @click="toggleAlarm()">
+    <v-row no-gutters class="cursor-pointer" @click="setAlarm(departure)">
       <v-col cols="6" align-self="center">
         <div class="d-flex me-auto align-center">
           <div
@@ -30,10 +30,10 @@
           </div>
         </div>
       </v-col>
-      <v-col cols="2" align-self="center">
+      <v-col :class="alarmColor" cols="2" align-self="center">
         <div class="d-flex align-center">
-          <v-icon :class="alarmColor" icon="mdi-walk" />
-          <div :class="alarmColor" style="min-width: 3rem">
+          <v-icon icon="mdi-walk" />
+          <div style="min-width: 3rem">
             {{ departure.timeRemainingWalk }}
           </div>
         </div>
@@ -43,24 +43,26 @@
 </template>
 <script setup lang="ts">
 import type { Departure } from "@/config/types";
-import { useDepartureAlarm } from "@/composables/useDepartureAlarm";
+import { useDepartureAlarmGlobal } from "@/composables/useDepartureAlarmGlobal";
 
 const props = defineProps<{
   departure: Departure;
 }>();
 
-const { alarmSet, alarmOn, toggleAlarm } = useDepartureAlarm(props.departure);
+const {
+  setAlarm,
+  departure: alarmDeparture,
+  alarmOn,
+} = useDepartureAlarmGlobal();
 
 const alarmColor = computed(() => {
-  if (alarmOn.value) {
-    return "alarm-on";
+  if (
+    props.departure.journeyDetailRef !== alarmDeparture.value?.journeyDetailRef
+  ) {
+    return "";
   }
 
-  if (alarmSet.value) {
-    return "alarm-set";
-  }
-
-  return "";
+  return alarmOn.value ? "alarm-on" : "alarm-set";
 });
 </script>
 <style scoped lang="scss">

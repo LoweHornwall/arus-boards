@@ -1,7 +1,7 @@
 <template>
-  <v-card color="primary" variant="outlined">
-    <v-card-text>
-      <div class="d-flex align-center">
+  <v-card color="primary" variant="outlined" style="height: 3rem">
+    <v-card-text class="fill-height">
+      <div class="d-flex align-center justify-center fill-height">
         <div class="text-h5 me-1">{{ time }}</div>
         <div class="text-h6 me-1">{{ date }}</div>
         <div class="text-h6 me-1">{{ weekday }}</div>

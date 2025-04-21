@@ -152,12 +152,7 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
     cutoffTime.setMinutes(cutoffTime.getMinutes() - 1);
     const walkTimeStart = new Date(date.getTime() + boardConfig.walkTime);
 
-    const newDepartures = departures.filter(
-      (departure) =>
-        new Date(`${departure.date} ${departure.time}`) > cutoffTime
-    );
-
-    newDepartures.forEach((departure) => {
+    departures.forEach((departure) => {
       departure.timeRemaining = calculateTimeRemaining(
         date,
         new Date(`${departure.date} ${departure.time}`)
@@ -167,6 +162,11 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
         new Date(`${departure.date} ${departure.time}`)
       );
     });
+
+    const newDepartures = departures.filter(
+      (departure) =>
+        new Date(`${departure.date} ${departure.time}`) > cutoffTime
+    );
 
     return newDepartures;
   }
