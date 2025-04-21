@@ -2,59 +2,54 @@ import type { Departure } from "@/config/types";
 import { useSound } from "@vueuse/sound";
 import alarmSFX from "../assets/sounds/alarm-clock.mp3";
 
-export function useDepartureAlarm(departure: Departure) {
-  const alarmSet = ref(false);
-  const alarmOn = ref(false);
+const departure = ref<Departure | null>(null);
+const alarmOn = ref(false);
+
+export function useDepartureAlarm() {
   const { play: playAlarmSound, stop: stopAlarmSound } = useSound(alarmSFX, {
     volume: 1,
     loop: true,
   });
 
-  let unwatch: (() => void) | null = null;
+  function setAlarm(newDeparture: Departure) {
+    departure.value = newDeparture;
+  }
+
+  function clearAlarm() {
+    departure.value = null;
+    alarmOn.value = false;
+    stopAlarmSound();
+  }
 
   function turnOnAlarm() {
-    alarmSet.value = true;
-    unwatch = watch(
-      () => departure.timeRemainingWalk,
+    alarmOn.value = true;
+    playAlarmSound();
+  }
+
+  function turnOffAlarm() {
+    alarmOn.value = false;
+    stopAlarmSound();
+  }
+
+  function turnOnWatcher() {
+    watch(
+      () => departure.value?.timeRemainingWalk,
       () => {
-        if (departure.timeRemainingWalk === "Now") {
-          alarmOn.value = true;
-          playAlarmSound();
-        } else if (alarmOn.value && unwatch) {
+        if (departure.value?.timeRemainingWalk === "Now") {
+          turnOnAlarm();
+        } else {
           turnOffAlarm();
         }
       }
     );
   }
 
-  function turnOffAlarm() {
-    alarmSet.value = false;
-    alarmOn.value = false;
-    stopAlarmSound();
-    if (unwatch) {
-      unwatch();
-      unwatch = null;
-    }
-  }
-
-  function toggleAlarm() {
-    if (alarmSet.value) {
-      turnOffAlarm();
-    } else {
-      turnOnAlarm();
-    }
-  }
-
-  onUnmounted(() => {
-    console.log("unmounted");
-    turnOffAlarm();
-  });
-
   return {
-    alarmSet,
+    departure,
     alarmOn,
-    turnOnAlarm,
+    setAlarm,
+    clearAlarm,
     turnOffAlarm,
-    toggleAlarm,
+    turnOnWatcher,
   };
 }

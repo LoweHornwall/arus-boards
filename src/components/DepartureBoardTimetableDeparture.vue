@@ -43,17 +43,13 @@
 </template>
 <script setup lang="ts">
 import type { Departure } from "@/config/types";
-import { useDepartureAlarmGlobal } from "@/composables/useDepartureAlarmGlobal";
+import { useDepartureAlarm } from "@/composables/useDepartureAlarm";
 
 const props = defineProps<{
   departure: Departure;
 }>();
 
-const {
-  setAlarm,
-  departure: alarmDeparture,
-  alarmOn,
-} = useDepartureAlarmGlobal();
+const { setAlarm, departure: alarmDeparture, alarmOn } = useDepartureAlarm();
 
 const alarmColor = computed(() => {
   if (

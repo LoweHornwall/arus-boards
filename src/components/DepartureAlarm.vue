@@ -55,10 +55,10 @@
   </v-card>
 </template>
 <script setup lang="ts">
-import { useDepartureAlarmGlobal } from "@/composables/useDepartureAlarmGlobal";
+import { useDepartureAlarm } from "@/composables/useDepartureAlarm";
 
 const { alarmOn, departure, turnOffAlarm, clearAlarm, turnOnWatcher } =
-  useDepartureAlarmGlobal();
+  useDepartureAlarm();
 
 turnOnWatcher();
 
