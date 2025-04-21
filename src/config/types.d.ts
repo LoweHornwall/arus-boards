@@ -36,11 +36,6 @@ export interface DeparturesBoard {
   departuresDir2: Departure[];
 }
 
-export interface Config {
-  apiKey: string;
-  boards: BoardConfig[];
-}
-
 export interface BoardConfig {
   displayName: string;
   stopId: number;
@@ -48,4 +43,19 @@ export interface BoardConfig {
   fetchInterval: number;
   fetchDuration: number;
   walkTime: number;
+}
+export interface Config {
+  departureBoards: DepartureBoardsConfig;
+  weather: WeatherConfig;
+}
+
+export interface DepartureBoardsConfig {
+  apiKey: string;
+  boards: BoardConfig[];
+}
+
+export interface WeatherConfig {
+  latitude: number;
+  longitude: number;
+  fetchInterval: number;
 }

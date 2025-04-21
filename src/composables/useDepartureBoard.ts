@@ -90,7 +90,7 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
     );
 
     if (index !== -1) {
-      departures[index] = Object.assign(departures[index], departure);
+      Object.assign(departures[index], departure);
     } else {
       departures.push(departure);
     }
