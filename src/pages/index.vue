@@ -13,11 +13,11 @@
           <v-col cols="3">
             <digital-clock />
           </v-col>
-          <v-col cols="6">
-            <departure-alarm />
-          </v-col>
-          <v-col cols="3">
+          <v-col cols="2">
             <WeatherDisplay />
+          </v-col>
+          <v-col cols="7">
+            <departure-alarm />
           </v-col>
         </v-row>
       </v-container>

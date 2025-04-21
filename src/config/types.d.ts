@@ -28,6 +28,7 @@ export interface Departure {
   timeRemaining: string;
   timeRemainingWalk: string;
   journeyDetailRef: string;
+  boardName: string;
 }
 
 export interface DeparturesBoard {

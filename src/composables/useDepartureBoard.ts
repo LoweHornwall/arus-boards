@@ -76,6 +76,7 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
       timeRemaining: calculateTimeRemaining(startDate, departureDate),
       timeRemainingWalk: calculateTimeRemaining(walkTimeStart, departureDate),
       journeyDetailRef: resrobotDeparture.JourneyDetailRef.ref,
+      boardName: boardConfig.displayName,
     };
 
     return departure;

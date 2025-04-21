@@ -9,6 +9,11 @@
     <v-card-text class="d-flex fill-height align-center justify-center">
       <v-container v-if="departure" class="pa-0 ma-0" fluid>
         <v-row no-gutters class="cursor-pointer">
+          <v-col cols="2" align-self="center">
+            <div class="d-flex me-auto align-center">
+              {{ departure.boardName }}
+            </div>
+          </v-col>
           <v-col cols="4" align-self="center">
             <div class="d-flex me-auto align-center">
               <div
@@ -32,16 +37,8 @@
           </v-col>
           <v-col cols="2" align-self="center">
             <div class="d-flex align-center">
-              <v-icon icon="mdi-bus-clock" />
-              <div style="min-width: 3rem">
-                {{ departure.timeRemaining }}
-              </div>
-            </div>
-          </v-col>
-          <v-col cols="2" align-self="center">
-            <div class="d-flex align-center">
-              <v-icon icon="mdi-walk" />
-              <div style="min-width: 3rem">
+              <v-icon class="alarm-set" icon="mdi-walk" />
+              <div class="alarm-set" style="min-width: 3rem">
                 {{ departure.timeRemainingWalk }}
               </div>
             </div>
@@ -78,5 +75,9 @@ const alarmColor = computed(() => {
   50% {
     background-color: #ee4646;
   }
+}
+
+.alarm-set {
+  color: #ff0000;
 }
 </style>
