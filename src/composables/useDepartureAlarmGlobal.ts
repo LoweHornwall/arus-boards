@@ -35,7 +35,6 @@ export function useDepartureAlarmGlobal() {
     watch(
       () => departure.value?.timeRemainingWalk,
       () => {
-        console.log("Alarm check:", departure.value?.timeRemainingWalk);
         if (departure.value?.timeRemainingWalk === "Now") {
           turnOnAlarm();
         } else {

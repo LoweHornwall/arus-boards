@@ -68,10 +68,13 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
     );
     const walkTimeStart = new Date(startDate.getTime() + boardConfig.walkTime);
 
+    const time = resrobotDeparture.time.split(":");
+    const formattedTime = `${time[0]}:${time[1]}`;
+
     const departure = {
       line: resrobotDeparture.Product[0].line,
       direction: formatDirection(resrobotDeparture.direction),
-      time: resrobotDeparture.time,
+      time: formattedTime,
       date: resrobotDeparture.date,
       timeRemaining: calculateTimeRemaining(startDate, departureDate),
       timeRemainingWalk: calculateTimeRemaining(walkTimeStart, departureDate),

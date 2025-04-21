@@ -17,7 +17,6 @@ export function useDepartureAlarm(departure: Departure) {
     unwatch = watch(
       () => departure.timeRemainingWalk,
       () => {
-        console.log("Alarm check:", departure.timeRemainingWalk);
         if (departure.timeRemainingWalk === "Now") {
           alarmOn.value = true;
           playAlarmSound();
