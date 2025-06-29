@@ -1,0 +1,87 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "type": "object",
+    "properties": {
+      "departureBoards": {
+        "type": "object",
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Trafiklab ResRobot API key for accessing the departure boards service"
+          },
+          "boards": {
+            "type": "array",
+            "items": [
+              {
+                "type": "object",
+                "properties": {
+                  "displayName": {
+                    "type": "string",
+                    "description": "The name of the departure board as displayed in the UI."
+                  },
+                  "stopId": {
+                    "type": "integer",
+                    "description": "The id for the stop in the ResRobot API. See https://www.trafiklab.se/sv/api/our-apis/resrobot-v21/stop-lookup/ for more information."
+                  },
+                  "products": {
+                    "type": "integer",
+                    "description": "The product type to filter departures by. See https://www.trafiklab.se/sv/api/our-apis/resrobot-v21/common/ for more information."
+                  },
+                  "fetchInterval": {
+                    "type": "integer",
+                    "description": "The interval in milliseconds to fetch new departures from the ResRobot API. Balance this so that you don't exceed the API rate limits, but also get timely updates."
+                  },
+                  "fetchDuration": {
+                    "type": "integer",
+                    "description": "How many minutes into the future to fetch departures. This is used to limit the number of departures fetched from the ResRobot API."
+                  },
+                  "walkTime": {
+                    "type": "integer",
+                    "description": "The time in milliseconds to walk to the stop from the current location. This is used to calculate the displayed departure time."
+                  }
+                },
+                "required": [
+                  "displayName",
+                  "stopId",
+                  "products",
+                  "fetchInterval",
+                  "fetchDuration",
+                  "walkTime"
+                ]
+              }
+            ]
+          }
+        },
+        "required": [
+          "apiKey",
+          "boards"
+        ]
+      },
+      "weather": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the location for which to fetch the weather."
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the location for which to fetch the weather."
+          },
+          "fetchInterval": {
+            "type": "integer",
+            "description": "The interval in milliseconds to fetch new weather data."
+          }
+        },
+        "required": [
+          "latitude",
+          "longitude",
+          "fetchInterval"
+        ]
+      }
+    },
+    "required": [
+      "departureBoards",
+      "weather"
+    ]
+  }
