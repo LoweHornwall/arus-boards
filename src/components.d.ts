@@ -9,12 +9,12 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AppFooter: typeof import('./components/AppFooter.vue')['default']
-    copy: typeof import('./components/DeparturesBoard copy.vue')['default']
     DepartureAlarm: typeof import('./components/DepartureAlarm.vue')['default']
     DepartureBoard: typeof import('./components/DepartureBoard.vue')['default']
     DepartureBoards: typeof import('./components/DepartureBoards.vue')['default']
     DepartureBoardTimetable: typeof import('./components/DepartureBoardTimetable.vue')['default']
     DepartureBoardTimetableDeparture: typeof import('./components/DepartureBoardTimetableDeparture.vue')['default']
+    DeparturesBoard: typeof import('./components/DeparturesBoard.vue')['default']
     DigitalClock: typeof import('./components/DigitalClock.vue')['default']
     HelloWorld: typeof import('./components/HelloWorld.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']

@@ -1,6 +1,26 @@
 <template>
   <v-card v-if="departureBoard" color="primary" variant="outlined">
-    <v-card-title class="text-center">{{ departureBoard.name }}</v-card-title>
+    <v-card-title class="position-relative d-flex justify-center align-center">
+      <span class="text-center w-100" style="pointer-events: none">
+        {{ departureBoard.name }}
+      </span>
+      <div
+        class="d-flex align-center position-absolute"
+        style="
+          right: 16px;
+          top: 50%;
+          transform: translateY(-50%);
+          pointer-events: auto;
+        "
+      >
+        <v-btn :loading="loading" rounded="xl" @click="fetchDepartureBoard">
+          <v-icon icon="mdi-refresh" />
+        </v-btn>
+        <span class="text-caption ms-2">
+          Last updated: {{ minutesSinceLastFetch }} minute{{ minutesSinceLastFetch === 1 ? '' : 's' }} ago
+        </span>
+      </div>
+    </v-card-title>
     <v-card-text class="text-center">
       <v-container class="pa-0 ma-0" fluid>
         <v-row no-gutters>
@@ -43,10 +63,13 @@ const props = defineProps<{
   boardConfig: BoardConfig;
 }>();
 
-const { departureBoard, start } = useDepartureBoard(
-  props.apiKey,
-  props.boardConfig
-);
+const {
+  departureBoard,
+  start,
+  fetchDepartureBoard,
+  loading,
+  minutesSinceLastFetch,
+} = useDepartureBoard(props.apiKey, props.boardConfig);
 
 start();
 </script>

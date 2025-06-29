@@ -19,9 +19,12 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
   const url = `https://api.resrobot.se/v2.1/departureBoard?id=${boardConfig.stopId}&products=${boardConfig.products}&duration=${boardConfig.fetchDuration}&accessId=${apiKey}&format=json`;
   let fetchIntervalId: number | null = null;
   let timeUpdateIntervalId: number | null = null;
+  const lastFetchTime = ref<Date | null>(null);
+  const minutesSinceLastFetch = ref(0);
 
   function fetchDepartureBoard() {
     loading.value = true;
+    lastFetchTime.value = new Date();
     fetch(url)
       .then((response) => {
         if (!response.ok) {
@@ -141,6 +144,8 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
 
     const now = new Date();
 
+    updateMinutesSinceLastFetch(now);
+
     departureBoard.value.departuresDir1 = buildTimeUpdatedDepartures(
       now,
       departureBoard.value.departuresDir1
@@ -173,6 +178,12 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
     );
 
     return newDepartures;
+  }
+
+  function updateMinutesSinceLastFetch(date: Date) {
+    if (!lastFetchTime.value) return;
+    const diff = date.getTime() - lastFetchTime.value.getTime();
+    minutesSinceLastFetch.value = Math.floor(diff / (1000 * 60));
   }
 
   function startFetchInterval() {
@@ -223,6 +234,8 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
     stopFetchInterval,
     startTimeUpdateInterval,
     stopTimeUpdateInterval,
+    lastFetchTime,
+    minutesSinceLastFetch,
     start,
     stop,
   };
