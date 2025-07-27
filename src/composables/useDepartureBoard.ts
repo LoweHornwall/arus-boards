@@ -24,7 +24,6 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
 
   function fetchDepartureBoard() {
     loading.value = true;
-    lastFetchTime.value = new Date();
     fetch(url)
       .then((response) => {
         if (!response.ok) {
@@ -35,6 +34,8 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
       .then(
         (resrobotDepartureBoardResponse: RestrobotDepartureBoardResponse) => {
           updateDepartureBoard(resrobotDepartureBoardResponse);
+          lastFetchTime.value = new Date();
+          minutesSinceLastFetch.value = 0;
         }
       )
       .catch((error) => {
