@@ -7,7 +7,7 @@
     ></v-progress-circular>
   </div>
   <div v-else>
-    <v-app-bar>
+    <v-app-bar color="black">
       <v-container fluid>
         <v-row>
           <v-col cols="3">

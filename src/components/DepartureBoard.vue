@@ -1,5 +1,5 @@
 <template>
-  <v-card v-if="departureBoard" color="primary" variant="outlined">
+  <v-card v-if="departureBoard" variant="flat">
     <v-card-title class="position-relative d-flex justify-center align-center">
       <span class="text-center w-100" style="pointer-events: none">
         {{ departureBoard.name }}
@@ -13,11 +13,19 @@
           pointer-events: auto;
         "
       >
-        <v-btn :loading="loading" rounded="xl" @click="fetchDepartureBoard">
+        <v-btn
+          variant="tonal"
+          :loading="loading"
+          rounded="xl"
+          @click="fetchDepartureBoard"
+        >
           <v-icon icon="mdi-refresh" />
         </v-btn>
         <span class="text-caption ms-2">
-          Last updated: {{ minutesSinceLastFetch }} minute{{ minutesSinceLastFetch === 1 ? '' : 's' }} ago
+          Last updated: {{ minutesSinceLastFetch }} minute{{
+            minutesSinceLastFetch === 1 ? "" : "s"
+          }}
+          ago
         </span>
       </div>
     </v-card-title>

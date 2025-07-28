@@ -1,7 +1,6 @@
 <template>
   <v-card
-    color="primary"
-    variant="outlined"
+    variant="flat"
     :class="alarmColor"
     style="height: 3rem"
     @click="turnOffAlarm"
@@ -44,7 +43,9 @@
             </div>
           </v-col>
           <v-col cols="2" align-self="center">
-            <v-btn class="align-center" @click="clearAlarm">Cancel</v-btn>
+            <v-btn variant="tonal" class="align-center" @click="clearAlarm"
+              >Cancel</v-btn
+            >
           </v-col>
         </v-row>
       </v-container>
