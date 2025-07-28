@@ -76,7 +76,7 @@ export function useWeather() {
 
   const intervalId = setInterval(() => {
     fetchWeather();
-  }, config.value?.weather.fetchInterval);
+  }, (config.value?.weather.fetchInterval || 600) * 1000);
 
   onUnmounted(() => {
     clearInterval(intervalId);

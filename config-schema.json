@@ -29,7 +29,7 @@
                   },
                   "fetchInterval": {
                     "type": "integer",
-                    "description": "The interval in milliseconds to fetch new departures from the ResRobot API. Balance this so that you don't exceed the API rate limits, but also get timely updates."
+                    "description": "The interval in seconds to fetch new departures from the ResRobot API. Balance this so that you don't exceed the API rate limits, but also get timely updates."
                   },
                   "fetchDuration": {
                     "type": "integer",
@@ -37,7 +37,7 @@
                   },
                   "walkTime": {
                     "type": "integer",
-                    "description": "The time in milliseconds to walk to the stop from the current location. This is used to calculate the displayed departure time."
+                    "description": "The time in seconds to walk to the stop from the current location. This is used to calculate the displayed departure time."
                   }
                 },
                 "required": [
@@ -70,7 +70,7 @@
           },
           "fetchInterval": {
             "type": "integer",
-            "description": "The interval in milliseconds to fetch new weather data."
+            "description": "The interval in seconds to fetch new weather data."
           }
         },
         "required": [

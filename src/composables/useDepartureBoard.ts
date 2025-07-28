@@ -70,7 +70,9 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
     const departureDate = new Date(
       `${resrobotDeparture.date} ${resrobotDeparture.time}`
     );
-    const walkTimeStart = new Date(startDate.getTime() + boardConfig.walkTime);
+    const walkTimeStart = new Date(
+      startDate.getTime() + boardConfig.walkTime * 1000
+    );
 
     const time = resrobotDeparture.time.split(":");
     const formattedTime = `${time[0]}:${time[1]}`;
@@ -160,7 +162,9 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
   function buildTimeUpdatedDepartures(date: Date, departures: Departure[]) {
     const cutoffTime = new Date(date);
     cutoffTime.setMinutes(cutoffTime.getMinutes() - 1);
-    const walkTimeStart = new Date(date.getTime() + boardConfig.walkTime);
+    const walkTimeStart = new Date(
+      date.getTime() + boardConfig.walkTime * 1000
+    );
 
     departures.forEach((departure) => {
       departure.timeRemaining = calculateTimeRemaining(
@@ -190,7 +194,7 @@ export function useDepartureBoard(apiKey: string, boardConfig: BoardConfig) {
   function startFetchInterval() {
     fetchIntervalId = setInterval(() => {
       fetchDepartureBoard();
-    }, boardConfig.fetchInterval);
+    }, boardConfig.fetchInterval * 1000);
   }
 
   function stopFetchInterval() {
